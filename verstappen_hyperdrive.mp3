@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Max Verstappen Fan Site</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; overflow-x: hidden; background: black; color: white; }
+
+  /* STARS BACKGROUND */
+  #stars { position: fixed; width: 100%; height: 100%; overflow: hidden; z-index: 0; }
+  .star {
+    position: absolute; width: 2px; height: 2px;
+    background: white; border-radius: 50%; opacity: 0.8;
+    will-change: transform;
+  }
+
+  /* MOUSE FOLLOWER F1 CAR */
+  .follower {
+    position: fixed; width: 60px; height: 30px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/7/7f/Red_Bull_Racing_RB19_2023.jpg') no-repeat center/cover;
+    pointer-events: none; z-index: 2; transform: translate(-50%, -50%);
+  }
+
+  /* SECTIONS */
+  section {
+    position: relative; min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; padding: 20px; z-index: 1;
+  }
+
+  h1 { font-size: 4rem; margin-bottom: 20px; text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000; }
+  p { font-size: 1.5rem; max-width: 700px; line-height: 1.5; }
+
+  img { max-width: 80%; border-radius: 20px; box-shadow: 0 0 20px red; margin-top: 20px; }
+
+  /* NAV DOTS */
+  .dots {
+    position: fixed; right: 20px; top: 50%;
+    transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 10px; z-index: 3;
+  }
+  .dot {
+    width: 15px; height: 15px; background: white; border-radius: 50%;
+    cursor: pointer; opacity: 0.5; transition: all 0.3s;
+  }
+  .dot.active { opacity: 1; transform: scale(1.2); }
+
+  /* AUDIO PLAYER */
+  audio { margin-top: 20px; width: 80%; border-radius: 10px; }
+
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+<div class="follower"></div>
+
+<div class="dots">
+  <div class="dot active" data-target="0"></div>
+  <div class="dot" data-target="1"></div>
+  <div class="dot" data-target="2"></div>
+  <div class="dot" data-target="3"></div>
+  <div class="dot" data-target="4"></div>
+</div>
+
+<!-- SECTIONS -->
+<section style="background: rgba(0,0,0,0.7);">
+  <h1>Max Verstappen</h1>
+  <p>Welcome to the ultimate Max Verstappen fan site! Experience the speed, excitement, and glory of F1 with Red Bull Racing's superstar.</p>
+</section>
+
+<section style="background: rgba(10,10,10,0.7);">
+  <h1>About Max</h1>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/3/34/Max_Verstappen_2022_Miami_Grand_Prix.jpg" alt="Max Verstappen">
+  <p>Max Emilian Verstappen is a Dutch Formula One racing driver currently competing for Red Bull Racing. Known for his speed and daring overtakes, he is one of F1’s brightest stars.</p>
+</section>
+
+<section style="background: rgba(20,20,20,0.7);">
+  <h1>Achievements</h1>
+  <p>🏆 Multiple Grand Prix wins<br>🏆 Formula 1 World Champion<br>🏆 Known for aggressive racing and amazing consistency</p>
+</section>
+
+<section style="background: rgba(30,30,30,0.7);">
+  <h1>Fan Gallery</h1>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/7/7f/Red_Bull_Racing_RB19_2023.jpg" alt="Red Bull F1 Car">
+  <p>Share your love for Max Verstappen! Fan art, photos, and more can go here.</p>
+</section>
+
+<section style="background: rgba(40,40,40,0.7);">
+  <h1>Max Verstappen Song</h1>
+  <p>Enjoy this fan tribute to Max Verstappen!</p>
+  <audio controls>
+    <source src="https://t.me/+twwgIQrJ181lMmZk" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+</section>
+
+<script>
+  // CREATE STARS
+  const starsContainer = document.getElementById('stars');
+  const numStars = 300;
+  let stars = [];
+
+  for (let i = 0; i < numStars; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.top = Math.random() * window.innerHeight + 'px';
+    star.style.left = Math.random() * window.innerWidth + 'px';
+    star.style.width = star.style.height = (Math.random() * 3 + 1) + 'px';
+    star.style.opacity = Math.random();
+    starsContainer.appendChild(star);
+    stars.push({el: star, x: parseFloat(star.style.left), y: parseFloat(star.style.top)});
+  }
+
+  // MOUSE TRACKING
+  const follower = document.querySelector('.follower');
+  let mouseX = window.innerWidth/2, mouseY = window.innerHeight/2;
+  window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+
+  function animate() {
+    // F1 CAR FOLLOW MOUSE
+    const rect = follower.getBoundingClientRect();
+    follower.style.left = rect.left + (mouseX - rect.left) * 0.1 + 'px';
+    follower.style.top = rect.top + (mouseY - rect.top) * 0.1 + 'px';
+
+    // STARS PARALLAX
+    stars.forEach(s => {
+      const offsetX = (mouseX - window.innerWidth/2) * 0.02 * (s.el.offsetWidth/3);
+      const offsetY = (mouseY - window.innerHeight/2) * 0.02 * (s.el.offsetHeight/3);
+      s.el.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+    });
+
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  // SCROLL DOT NAVIGATION
+  const dots = document.querySelectorAll('.dot');
+  const sections = document.querySelectorAll('section');
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const targetIndex = dot.dataset.target;
+      sections[targetIndex].scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  // ACTIVE DOT ON SCROLL
+  window.addEventListener('scroll', () => {
+    let scrollPos = window.scrollY + window.innerHeight/2;
+    sections.forEach((sec, i) => {
+      if (scrollPos >= sec.offsetTop && scrollPos < sec.offsetTop + sec.offsetHeight) {
+        dots.forEach(d => d.classList.remove('active'));
+        dots[i].classList.add('active');
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
